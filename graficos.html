@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+    <div class="text-bg-dark p-3">Hamburguesería</div>
+    <div data-bs-theme="dark">
+    <button type="button" class="btn-close" aria-label="Close"></button>
+    </div>
+    <canvas id="miChartJS" width="400" height="300"></canvas>
+
+    <div class="botones">
+        <a href="index.html" class="btn btn-primary">Volver a Votar</a>
+        <a href="php/reiniciarVotos.php" class="btn btn-danger">Reiniciar Votación</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.min.js"></script>
+
+<script>
+
+async function cargarVotos() {
+    const response = await fetch("php/getVotos.php");
+    const data = await response.json();
+    return data; // array de 6 valores
+}
+
+cargarVotos().then(votos => {
+
+    var ctx = document.getElementById('miChartJS').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: { 
+            labels: [
+                'La Insuperable', 
+                'La Finoli', 
+                'La Pesada', 
+                'Sopa de Tubo', 
+                'El Patriota', 
+                'Diablo Ácido'
+            ],
+            datasets: [{
+                label: 'Cantidad de Votos',
+                data: votos,
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+
+});
+
+// Función para reiniciar votos
+function reiniciarVotos() {
+    if (confirm('¿Estás seguro de que quieres reiniciar todos los votos?')) {
+        fetch("reiniciarVotos.php"); // opcional si lo implementás
+        location.reload();
+    }
+}
+
+</script>
+
+
+</body>
+</html>
